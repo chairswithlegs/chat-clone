@@ -5,7 +5,9 @@ module.exports = (passport) => {
     const router = new express.Router();
     
     router.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
-        const payload = { username: req.user.username };
+        console.log(req.user);
+        //JWT payload (username and ID) will be appended to requests authenticated by JWT
+        const payload = { username: req.user.username, id: req.user._id.$oid };
         const token = jwt.sign(payload, process.env.JWT_KEY);
         res.json({ token: token });
     });

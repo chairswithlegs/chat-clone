@@ -22,10 +22,10 @@ export class ChatService {
 	createChatRoom(roomName: String): Observable<string> {
 		//Create a room on the server
 		return Observable.of('');
-	}
+    }
 
-	getMessages(roomId: String): Observable<ChatMessage[]> {
-		return Observable.of([]);
+	getChatMessages(roomId: String): Observable<ChatMessage[]> {
+		return Observable.of();
 	}
 	
 	sendMessage(roomId: String, message: ChatMessage) {

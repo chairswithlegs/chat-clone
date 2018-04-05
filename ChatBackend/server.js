@@ -16,9 +16,6 @@ const mongoose = require('mongoose');
 mongoose.connection.on('error', () => console.log('Database connection error.'));
 mongoose.connection.once('open', () => console.log('Connected to database.'));
 
-//Load and configure socket.io with the server
-const io = require('./socket/socket-init')(server);
-
 //Load and configure passport
 const passport = require('passport');
 const passportStrategies = require('./passport-strategies');
@@ -31,6 +28,7 @@ const cors = require('cors');
 
 //Load the routes
 const authenticationRouter = require('./routes/authentication')(passport);
+const chatRouter = require('./routes/chat')(server, passport);
 
 
 
@@ -47,6 +45,7 @@ if (process.env.ENVIRONMENT === 'Development') {
 
 //Add the api routes
 app.use('/api/authentication', authenticationRouter);
+app.use('/api/chat', chatRouter);
 
 //Add the public files (Angular app), and redirect all uncaught GET requests to the app as well
 app.use(express.static('public'));
