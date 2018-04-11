@@ -63,15 +63,24 @@ export class AuthStateService {
         });
     }
 
-    //Verifies with the server that the currently stored token is valid
-    private validateToken(): Observable<boolean> {
+    getAuthHeader(): string {
         const storedToken = localStorage.getItem(this.tokenStorageKey);
 
-        if (storedToken === null) {
+        if (storedToken !== null)
+            return `JWT ${storedToken}`;
+        else
+            return null;
+    }
+
+    //Verifies with the server that the currently stored token is valid
+    private validateToken(): Observable<boolean> {;
+        const authHeader = this.getAuthHeader();
+
+        if (authHeader === null) {
             return Observable.of(false);
         } else {
             console.log('checking token with server.');
-            const headers = { Authorization: `JWT ${storedToken}`};
+            const headers = { Authorization: authHeader };
             return this.http.get(`${environment.apiUrl}/api/authentication/validate-token`, { headers: headers })
             .timeout(this.timeoutDuration)
             .map(() => true) //Set to true if we get to a successful response from the server
