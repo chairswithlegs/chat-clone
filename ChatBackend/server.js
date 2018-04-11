@@ -25,6 +25,8 @@ passport.use(passportStrategies.jwt);
 //Load misc. middleware
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const errorLogger = require('./middleware/errorLogger');
+const errorHandler = require('./middleware/errorHandler');
 
 //Load the routes
 const authenticationRouter = require('./routes/authentication')(passport);
@@ -39,7 +41,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 //Allow cross-origin requests if we are doing dev work
-if (process.env.ENVIRONMENT === 'Development') {
+if (process.env.NODE_EV === 'development') {
     app.use(cors());
 }
 
@@ -50,6 +52,10 @@ app.use('/api/chat', chatRouter);
 //Add the public files (Angular app), and redirect all uncaught GET requests to the app as well
 app.use(express.static('public'));
 app.get('*', (req, res) => res.sendFile(`${__dirname}/public/index.html`));
+
+//Add the error handling middleware
+app.use(errorLogger);
+app.use(errorHandler);
 
 
 

@@ -3,101 +3,94 @@ module.exports = (server, passport) => {
     const express = require('express');
     const Room = require('../models/room');
     const Message = require('../models/message');
-    
-    //This router will handle room creation and deletion
     const router = new express.Router();
 
+
+
+    //ROUTES
+
     //Creates a new room (requires name and (optional) password in req body)
-    router.post('/create-room', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.post('/create-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+        //Verify that the room is given a name
+        if (req.body.name === undefined) res.status(400).json({ error: 'Room must be given a name.' });
+        
         //Populate the new room with the request values
-        const newRoomParams = {
-            name: req.body.name,
-            adminId: req.user._id
-        }
+        const newRoomParams = { name: req.body.name, adminId: req.user._id }
         //Optionally add the password to the new room
         if (req.body.password) newRoomParams.password = req.body.password;
         
         //Create and attempt to save the new room
         const newRoom = new Room(newRoomParams);
         newRoom.save((error, room) => {
-            if (error) {
-                console.log(`Failed to create room: ${error}`);
-                res.status(400).json({ error: 'Could not create room.' });
-            } else {
-                res.json({ 
-                    message: 'Room successfully created.',
-                    id: room._id
-                });
-            }
+            if (error)
+                next(error); //Pass along the error for middleware handling
+            else
+                res.json({ message: 'Room successfully created.', roomId: room._id });
         });
     });
 
     //Deletes the room (must be the room admin, must have id (of the room) in req body)
-    router.post('/delete-room', passport.authenticate('jwt', { session: false }), (req, res) => {
-        const roomId = req.body.id;
-        const adminId = req.user._id; //Appended to request by passport, verified by JWT
+    router.post('/delete-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+        const adminId = req.user._id; //Appended and verified by passport
         
-        if (roomId === undefined) {
-            res.status(400).json({ error: 'Could not delete room.' });
-        }
-
-        Room.findOne({ _id: roomId, adminId: adminId }).remove((error) => {
-            if (error) {
-                console.log(`Could not delete room: ${error}`);
-                res.status(500).json({ error: 'Could not delete room.' });
-            } else {
+        //Verify the room id was sent
+        if (req.body.id === undefined) res.status(400).json({ error: 'No room id specified.' });
+        
+        //Attempt to find and delete the room
+        Room.findOne({ _id: req.body.id, adminId: adminId }, (error) => next(error))
+        .remove((error) => {
+            if (error)
+                next(error);
+            else
                 res.json({ message: 'Room successfully deleted.' });
-            }
         });
     });
 
     //Returns an array with all the rooms
-    router.get('/room-list', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.get('/room-list', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         Room.find((error, rooms) => {
+            //Propagate database errors for middleware handling
             if (error) {
-                console.log(`Failed to get room list: ${error}`);
-                res.status(500).json({ error: 'Could not delete room.' });
+                next(error);
+                return;
             }
             
+            //Create and send a room array with the following info: name, id, and password(boolean)
             const roomList = [];
-
             for(let i=0; i<rooms.length; i++) {
                 const room = { 
                     name: rooms[i].name,
                     id: rooms[i]._id,
                     password: !!rooms[i].password
                 }
-
                 roomList.push(room);
             }
-
             res.json(roomList);
         });
     });
     
     //Adds the client socket to a chat room
-    router.post('/join-room', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.post('/join-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
-        const roomId = req.body.roomId;
-        const password = req.password || '';
 
         //Make sure the request body is complete
-        if (socket === undefined || roomId === undefined) {
+        if (socket === undefined || req.body.roomId === undefined) {
             res.status(400).json({ error: 'Could not join room' });
             return;
         }
 
         //Find the room in the database
-        Room.findOne({ _id: roomId }, (error, room) => {
+        Room.findOne({ _id: req.body.roomId }, (error, room) => {
             if (error) { //Scenario 1: Server or database error
-                console.log(error);
-                res.status(500).json({ error: 'Error joining room' });
+                next(error)
             } else if (room === null) { //Scenario 2: Room doesn't exist
                 res.status(400).json({ error: 'Room does not exist'});
             } else if (room.password) { //Scenario 3: Password protected room
-                room.comparePassword(password, (error, match) => {
-                    if (match) { //Password correct
-                        socket.join(room.id); //Add client socket to room so they get a room messages
+                room.comparePassword(req.body.password || '', (error, match) => {
+                    if (error) {
+                        next(error);
+                    } else if (match) {
+                        socket.join(room.id); //Add client socket to room
                         emitStoredMessages(room.id, socket); //Emit stored messages
                         res.json(({ message: `You joined the room.`}));
                     } else { //Password incorrect
@@ -105,7 +98,7 @@ module.exports = (server, passport) => {
                     }
                 });
             } else { //Scenario 4: Room with no password
-                socket.join(room.id); //Add client socket to room so they get messages
+                socket.join(room.id); //Add client socket to room
                 emitStoredMessages(room.id, socket); //Emit stored messages
                 res.json(({ message: `You joined the room.`}));
             }
@@ -113,45 +106,52 @@ module.exports = (server, passport) => {
     });
 
     //Removes a client socket from a room
-    router.post('/leave-room', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.post('/leave-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
-        const roomId = req.body.roomId;
 
-        socket.leave(roomId);
-        res.json({ message: 'Successfully left the room' });
+        //Ensure request body is set
+        if (req.body.roomId === undefined) {
+            res.status(400).json({ error: 'No room id specified.' });
+            return;
+        }
+        
+        //Attempt to remove the socket from the room
+        socket.leave(roomId, (error) => {
+            if (error)
+                next(error);
+            else
+                res.json({ message: 'Successfully left the room' });
+        });
     });
 
     //Post a chat message to a room
-    router.post('/create-message', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.post('/create-message', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
-        const roomId = req.body.roomId;
-        const messageText = req.body.messageText;
-        const username = req.user.username; //Appended to request by passport, verified by JWT
+        const username = req.user.username; //Appended and verified by passport
 
         //Make sure request body is complete
-        if (!socket || !roomId || !messageText) {
+        if (!socket || !req.body.roomId || !req.body.messageText) {
             res.status(400).json({ error: 'Failed to create message' });
             return;
         }
 
         //If the client socket is not in the room, don't send the message
-        if (socket.rooms[roomId] === undefined) {
-            res.json({ error: 'Failed to create message' });
+        if (socket.rooms[req.body.roomId] === undefined) {
+            res.status(400).json({ error: 'Socket not connected to room. Failed to create message' });
             return;
         }
 
         //Create the new message
         const newMessage = new Message({
-            messageText: messageText,
-            roomId: roomId,
+            messageText: req.body.messageText,
+            roomId: req.body.roomId,
             author: username
         });
 
         //Save the message to the database
         newMessage.save((error, message) => {
             if (error) {
-                console.log(error);
-                res.status(500).json({ error: 'Failed to create message' });
+                next(error)
             } else {
                 io.to(roomId).emit('message', message.messageText);
                 res.json({ message: 'Message sent' });
@@ -159,10 +159,17 @@ module.exports = (server, passport) => {
         });
     });
 
+
+
+    //CONVENIENCE FUNCTIONS
+
     //Have a socket emit all the stored message for a specific room
-    function emitStoredMessages(roomId, socket) {
+    function emitStoredMessages(roomId, socket, next) {
         Message.find({ roomId: roomId }, (error, messages) => {
-            messages.forEach((message) => socket.emit('message', message.messageText));
+            if (error)
+                socket.emit('message error', 'Could not load chat messages.');
+            else
+                messages.forEach((message) => socket.emit('message', message.messageText));
         });
     }
     
