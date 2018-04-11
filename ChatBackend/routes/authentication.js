@@ -13,7 +13,10 @@ module.exports = (passport) => {
     });
 
     router.get('/validate-token', passport.authenticate('jwt', { session: false }), (req, res) => {
-        res.json({ message: 'Token is valid' });
+        res.json({ 
+            message: 'Token is valid',
+            payload: req.user
+         });
     });
 
     router.post('/create-account', (req, res) => {

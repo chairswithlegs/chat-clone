@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 
 const roomSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    password: { type: String }
+    password: { type: String },
+    adminId: { type: String, required: true }
 });
 
 //Hashes the password before saving to the database
