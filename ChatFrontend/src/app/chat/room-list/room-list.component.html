@@ -1,0 +1,7 @@
+<div *ngFor="let chatRoom of chatRooms" class="card" style="width: 30rem;">
+    <div class="card-body">
+        <span *ngIf="chatRoom.password" class="badge badge-pill badge-primary">Password</span>
+        <h5 class="card-title">{{ chatRoom.name }}</h5>
+        <a (click)="joinClick.emit(chatRoom.id)" class="card-link">Join Room</a>
+    </div>
+</div>

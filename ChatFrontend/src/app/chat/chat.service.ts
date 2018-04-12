@@ -13,7 +13,24 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class ChatService {
 	
-	constructor(private http: HttpClient, private auth: AuthStateService) {}
+	constructor(private http: HttpClient, private auth: AuthStateService) {
+        this.getChatRoomList()
+        .take(1)
+        .subscribe((rooms) => {
+            rooms[0].id;
+            console.log(rooms[4].id);
+            console.log(rooms[4].password);
+
+            this.joinChatRoom(rooms[4].id, null)
+            .then((socket) => {
+                socket.on('message', console.log);
+                console.log('Socket created');
+                this.sendMessage(rooms[4].id, 'We sent a message', socket)
+                .take(1)
+                .subscribe(() => socket.disconnect());
+            });
+        });
+    }
 	
 	//Gets the list of available chat rooms
 	getChatRoomList(): Observable<any>  {
@@ -35,7 +52,7 @@ export class ChatService {
 	}
 	
 	//Attempts to create a socket connection to a chat room
-	connectToRoom(roomId: string, password: string): Promise<Socket> {
+	joinChatRoom(roomId: string, password: string): Promise<Socket> {
 		return new Promise((resolve, reject) => {
 			//Create a new socket connection
 			const socket = io('http://localhost:3000', { timeout: 3000 });
