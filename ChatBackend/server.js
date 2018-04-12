@@ -41,7 +41,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 //Allow cross-origin requests if we are doing dev work
-if (process.env.NODE_EV === 'development') {
+if (process.env.NODE_ENV === 'development') {
     app.use(cors());
 }
 

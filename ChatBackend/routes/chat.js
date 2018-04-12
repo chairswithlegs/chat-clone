@@ -105,25 +105,6 @@ module.exports = (server, passport) => {
         });
     });
 
-    //Removes a client socket from a room
-    router.post('/leave-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-        const socket = io.sockets.sockets[req.body.socketId];
-
-        //Ensure request body is set
-        if (req.body.roomId === undefined) {
-            res.status(400).json({ error: 'No room id specified.' });
-            return;
-        }
-        
-        //Attempt to remove the socket from the room
-        socket.leave(roomId, (error) => {
-            if (error)
-                next(error);
-            else
-                res.json({ message: 'Successfully left the room' });
-        });
-    });
-
     //Post a chat message to a room
     router.post('/create-message', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
@@ -153,7 +134,7 @@ module.exports = (server, passport) => {
             if (error) {
                 next(error)
             } else {
-                io.to(roomId).emit('message', message.messageText);
+                io.to(req.body.roomId).emit('message', message.messageText);
                 res.json({ message: 'Message sent' });
             }
         });
