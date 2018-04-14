@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
 import { ChatRoom } from './chatRoom';
-import { ChatMessage } from './chatMessage';
 import { environment } from '../../environments/environment';
 import { AuthStateService } from '../authentication/auth-state.service';
 import { Socket } from 'socket.io';

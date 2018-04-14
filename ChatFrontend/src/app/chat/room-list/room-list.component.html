@@ -1,7 +1,11 @@
-<div *ngFor="let chatRoom of chatRooms" class="card" style="width: 30rem;">
-    <div class="card-body">
-        <span *ngIf="chatRoom.password" class="badge badge-pill badge-primary">Password</span>
-        <h5 class="card-title">{{ chatRoom.name }}</h5>
-        <a (click)="joinClick.emit(chatRoom.id)" class="card-link">Join Room</a>
+<div class="room-list-container">
+    <div class="form-group search-bar">
+        <input name="room-search" type="text" aria-label="chat room search" class="form-control" id="room-search" placeholder="Enter Room Name" [(ngModel)]="searchString">
     </div>
+    
+    <ul class="list-group search-results" *ngIf="searchString">
+        <li class="list-group-item search-result" *ngFor="let chatRoom of chatRooms | searchFilter:searchString:'name':5" (click)="selectRoom(chatRoom)">
+            {{ chatRoom.name }} <span *ngIf="chatRoom.password" class="badge badge-pill badge-primary">Password</span>
+        </li>
+    </ul>
 </div>

@@ -10,7 +10,7 @@ export class DashboardComponent implements OnInit {
     
     chatRooms = [];
     
-    constructor(private chat: ChatService) { }
+    constructor(private chat: ChatService) {}
     
     ngOnInit() {
         this.chat.getChatRoomList()

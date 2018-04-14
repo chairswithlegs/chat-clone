@@ -1,4 +1,5 @@
 export class ChatRoom {
     name: String;
-    id: String;
+    roomId: String;
+    password: boolean;
 }

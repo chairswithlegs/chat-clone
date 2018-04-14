@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { ChatRoom } from '../chatRoom';
-import { ChatMessage } from '../chatMessage';
 
 @Component({
 	selector: 'app-chat-room',
