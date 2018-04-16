@@ -1,3 +1,24 @@
-<p>
-  chat-room works!
-</p>
+<div [class.fade]="showPasswordPrompt" class="container">
+	<div class="messages-container">
+		<div *ngFor="let message of messages">
+			<h2>{{ message.author }}</h2>
+			<p> {{ message.messageText }}</p>
+		</div>
+	</div>
+	
+	<div class="new-message-form">
+		<input #messageText type="text" />
+		<button (click)="sendMessage(messageText.value)">Send</button>
+	</div>
+</div>
+
+<div *ngIf="showPasswordPrompt" class="password-prompt card">
+	<h3>Password Required</h3>
+	<form (ngSubmit)="connect(password.value)">
+		<div class="form-group">
+			<input #password name="password" type="password" aria-label="password" class="form-control" id="password" placeholder="Password">
+		</div>
+		
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+</div>
