@@ -1,5 +1,6 @@
 export class ChatRoom {
-    name: String;
-    roomId: String;
+    name: string;
+    roomId: string;
     password: boolean;
+    adminStatus: boolean;
 }
