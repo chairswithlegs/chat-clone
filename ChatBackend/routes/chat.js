@@ -22,10 +22,19 @@ module.exports = (server, passport) => {
         //Create and attempt to save the new room
         const newRoom = new Room(newRoomParams);
         newRoom.save((error, room) => {
-            if (error)
+            if (error) {
                 next(error); //Pass along the error for middleware handling
-            else
-                res.json({ message: 'Room successfully created.', roomId: room._id });
+            } else {
+                res.json({
+                    message: 'Room successfully created.',
+                    room: {
+                        name: room.name,
+                        roomId: room._id,
+                        password: !!room.password,
+                        adminStatus: req.user.id === room.adminId
+                    }
+                });
+            } 
         });
     });
 
@@ -60,12 +69,31 @@ module.exports = (server, passport) => {
             for(let i=0; i<rooms.length; i++) {
                 const room = { 
                     name: rooms[i].name,
-                    id: rooms[i]._id,
-                    password: !!rooms[i].password
+                    roomId: rooms[i]._id,
+                    password: !!rooms[i].password,
+                    adminStatus: req.user.id === rooms[i].adminId
                 }
                 roomList.push(room);
             }
             res.json(roomList);
+        });
+    });
+
+    router.get('/room-list/:roomId', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+        Room.findById(req.params.roomId, (error, room) => {
+            if (error) {
+                next(error);
+            } else if (!room) {
+                res.status(400).json({ error: 'Room not found.' });
+            } else {
+                const response = {
+                    name: room.name,
+                    roomId: room._id,
+                    password: !!room.password,
+                    adminStatus: req.user.id === room.adminId
+                }
+                res.json(response);
+            }
         });
     });
     
@@ -94,7 +122,7 @@ module.exports = (server, passport) => {
                         emitStoredMessages(room.id, socket); //Emit stored messages
                         res.json(({ message: `You joined the room.`}));
                     } else { //Password incorrect
-                        res.status(400).json({ error: 'Invalid password. Failed to join room.' });
+                        res.status(401).json({ error: 'Invalid password. Failed to join room.' });
                     }
                 });
             } else { //Scenario 4: Room with no password
@@ -106,12 +134,12 @@ module.exports = (server, passport) => {
     });
 
     //Post a chat message to a room
-    router.post('/create-message', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    router.post('/send-message', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
         const username = req.user.username; //Appended and verified by passport
 
         //Make sure request body is complete
-        if (!socket || !req.body.roomId || !req.body.messageText) {
+        if (!socket || typeof(req.body.roomId) != 'string' || typeof(req.body.messageText) != 'string') {
             res.status(400).json({ error: 'Failed to create message' });
             return;
         }
@@ -134,8 +162,13 @@ module.exports = (server, passport) => {
             if (error) {
                 next(error)
             } else {
-                io.to(req.body.roomId).emit('message', message.messageText);
-                res.json({ message: 'Message sent' });
+                const _message = {
+                    messageText: message.messageText,
+                    author: message.author,
+                    roomId: message.roomId
+                }
+                io.to(req.body.roomId).emit('message', _message);
+                res.json({ message: 'Message sent', message: _message });
             }
         });
     });
@@ -147,10 +180,17 @@ module.exports = (server, passport) => {
     //Have a socket emit all the stored message for a specific room
     function emitStoredMessages(roomId, socket, next) {
         Message.find({ roomId: roomId }, (error, messages) => {
-            if (error)
-                socket.emit('message error', 'Could not load chat messages.');
-            else
-                messages.forEach((message) => socket.emit('message', message.messageText));
+            if (!error && messages) {
+                messages.forEach((message) => {
+                    const _message = {
+                        messageText: message.messageText,
+                        author: message.author,
+                        roomId: message.roomId
+                    }
+
+                    socket.emit('message', _message)
+                });
+            }
         });
     }
     
