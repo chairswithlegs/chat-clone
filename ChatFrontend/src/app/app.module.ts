@@ -10,25 +10,27 @@ import { DashboardComponent } from './chat/dashboard/dashboard.component';
 
 import { CoreModule } from './core/core.module';
 import { WelcomeComponent } from './core/welcome/welcome.component';
+import { ChatRoomComponent } from './chat/chat-room/chat-room.component';
 
 const routes: Route[] = [
-    { path: 'dashboard', component: DashboardComponent },
-    { path: '', component: WelcomeComponent },
-    { path: '**', component: WelcomeComponent }
+	{ path: 'dashboard', component: DashboardComponent },
+	{ path: 'chat-room/:roomId/:password', component: ChatRoomComponent },
+	{ path: '', component: WelcomeComponent },
+	{ path: '**', component: WelcomeComponent }
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AuthenticationModule,
-    CoreModule,
-    ChatModule,
-    RouterModule.forRoot(routes)
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent
+	],
+	imports: [
+		BrowserModule,
+		AuthenticationModule,
+		CoreModule,
+		ChatModule,
+		RouterModule.forRoot(routes)
+	],
+	providers: [],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }

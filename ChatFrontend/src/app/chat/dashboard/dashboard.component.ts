@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { ChatApiService } from '../chat-api.service';
+import { Router } from '@angular/router';
+import { ChatRoom } from '../chatRoom';
 
 @Component({
     selector: 'app-dashboard',
@@ -10,7 +12,7 @@ export class DashboardComponent implements OnInit {
     
     chatRooms = [];
     
-    constructor(private chat: ChatService) {}
+    constructor(private chat: ChatApiService, private router: Router) {}
     
     ngOnInit() {
         this.chat.getChatRoomList()
@@ -18,8 +20,8 @@ export class DashboardComponent implements OnInit {
         .subscribe((chatRooms) => this.chatRooms = chatRooms);
     }
 
-    joinCb(value) {
-        console.log(value);
+    joinChatRoom(roomId: string, password: boolean) {
+        this.router.navigate(['chat-room', roomId, password]);
     }
     
 }

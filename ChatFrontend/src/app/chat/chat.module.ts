@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
-import { ChatService } from './chat.service';
+import { ChatApiService } from './chat-api.service';
 import { RoomListComponent } from './room-list/room-list.component';
 import { SearchFilterPipe } from './search-filter.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -17,7 +17,7 @@ import { NewRoomFormComponent } from './new-room-form/new-room-form.component';
   exports: [
     DashboardComponent
   ],
-  providers: [ChatService],
+  providers: [ChatApiService],
   declarations: [DashboardComponent, ChatRoomComponent, RoomListComponent, SearchFilterPipe, NewRoomFormComponent]
 })
 export class ChatModule { }

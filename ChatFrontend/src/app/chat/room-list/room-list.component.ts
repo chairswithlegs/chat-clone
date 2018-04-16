@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { ChatApiService } from '../chat-api.service';
 import { Router } from '@angular/router';
 import { ChatRoom } from '../chatRoom';
 
@@ -16,15 +16,13 @@ export class RoomListComponent implements OnInit {
     @Input() maxListLength = 5;
     @Input() searchString = '';
 
-    constructor(private router: Router, private chat: ChatService) {}
+    constructor(private router: Router, private chat: ChatApiService) {}
     
     ngOnInit() {
         //Populate the list
         this.chat.getChatRoomList()
         .take(1)
-        .subscribe((chatRooms) => this.chatRooms = chatRooms);
-
-        this.roomSelected.subscribe((value) => console.log(value));
+        .subscribe((chatRooms: ChatRoom[]) => this.chatRooms = chatRooms);
     }
 
     selectRoom(chatRoom: ChatRoom): void {
