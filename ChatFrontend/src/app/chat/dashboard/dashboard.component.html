@@ -1,8 +1,8 @@
 <div class="container">
   <h2 class="text-center">Search for a chat room to join</h2>
-  <app-room-list (roomSelected)="joinChatRoom($event.roomId, $event.password)"></app-room-list>
+  <app-room-list (roomSelected)="joinChatRoom($event.roomId, $event.hasPassword)"></app-room-list>
   <br>
   <br>
   <h2 class="text-center">Or create a new one below</h2>
-  <app-new-room-form></app-new-room-form>
+  <app-new-room-form [joinOnCreate]="true"></app-new-room-form>
 </div>

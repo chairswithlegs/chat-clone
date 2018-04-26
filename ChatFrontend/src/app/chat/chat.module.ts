@@ -7,17 +7,20 @@ import { RoomListComponent } from './room-list/room-list.component';
 import { SearchFilterPipe } from './search-filter.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewRoomFormComponent } from './new-room-form/new-room-form.component';
+import { PasswordCacheService } from './password-cache.service';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ],
   exports: [
     DashboardComponent
   ],
-  providers: [ChatApiService],
+  providers: [ChatApiService, PasswordCacheService],
   declarations: [DashboardComponent, ChatRoomComponent, RoomListComponent, SearchFilterPipe, NewRoomFormComponent]
 })
 export class ChatModule { }

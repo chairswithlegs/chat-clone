@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ChatApiService } from '../chat-api.service';
 import { ChatRoom } from '../chatRoom';
+import { PasswordCacheService } from '../password-cache.service';
 
 @Component({
 	selector: 'app-new-room-form',
@@ -15,7 +16,7 @@ export class NewRoomFormComponent {
 	@Input() joinOnCreate = true;
 	@Output() roomCreated = new EventEmitter<ChatRoom>(); 
 	
-	constructor(private formBuilder: FormBuilder, private chat: ChatApiService) {
+	constructor(private formBuilder: FormBuilder, private chat: ChatApiService, private router: Router, private passwordCache: PasswordCacheService) {
 		this.form = formBuilder.group({
 			name: ['', Validators.required],
 			password: ['']
@@ -31,7 +32,11 @@ export class NewRoomFormComponent {
 			.take(1)
 			.subscribe((chatRoom) => {
 				this.roomCreated.emit(chatRoom);
-				console.log('it worked!');
+
+				if (this.joinOnCreate) {
+					this.passwordCache.setPassword(password);
+					this.router.navigate(['chat-room', chatRoom.roomId, chatRoom.hasPassword]);
+				}
 			});
 		}
 	}

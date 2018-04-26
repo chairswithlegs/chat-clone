@@ -1,22 +1,32 @@
 <div [class.fade]="showPasswordPrompt" class="container">
-	<div class="messages-container">
-		<div *ngFor="let message of messages">
-			<h2>{{ message.author }}</h2>
-			<p> {{ message.messageText }}</p>
+	<a [routerLink]="'/dashboard'">&lt; back to dashboard</a>
+
+	<div class="card">
+		<ul #messageContainer class="messages-container list-group list-group-flush">
+			<li *ngFor="let message of messages" class="message list-group-item">
+				<p class="text-primary">{{ message.author }}: </p>
+				<p> {{ message.messageText }}</p>
+			</li>
+		</ul>
+	</div>
+
+	<div class="new-message-form input-group">
+		<input #messageText type="text" class="form-control" aria-label="new message" />
+		<div class="input-group-append">
+			<button (click)="sendMessage(messageText.value)" class="btn btn-primary">Send</button>
 		</div>
 	</div>
-	
-	<div class="new-message-form">
-		<input #messageText type="text" />
-		<button (click)="sendMessage(messageText.value)">Send</button>
-	</div>
 </div>
+
 
 <div *ngIf="showPasswordPrompt" class="password-prompt card">
 	<h3>Password Required</h3>
 	<form (ngSubmit)="connect(password.value)">
 		<div class="form-group">
 			<input #password name="password" type="password" aria-label="password" class="form-control" id="password" placeholder="Password">
+			<div *ngIf="invalidPassword" class="text-danger">
+				Incorrect password
+			</div>
 		</div>
 		
 		<button type="submit" class="btn btn-primary">Submit</button>

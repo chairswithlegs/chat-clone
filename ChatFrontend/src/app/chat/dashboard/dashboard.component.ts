@@ -20,8 +20,8 @@ export class DashboardComponent implements OnInit {
         .subscribe((chatRooms) => this.chatRooms = chatRooms);
     }
 
-    joinChatRoom(roomId: string, password: boolean) {
-        this.router.navigate(['chat-room', roomId, password]);
+    joinChatRoom(roomId: string, hasPassword: boolean) {
+        this.router.navigate(['chat-room', roomId, hasPassword]);
     }
     
 }
