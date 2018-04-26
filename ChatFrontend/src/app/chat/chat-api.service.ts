@@ -58,7 +58,7 @@ export class ChatApiService {
 	createChatRoomSocket(roomId: string, password: string): Observable<Socket> {
 		return Observable.create((observer) => {
 			//Create a new socket connection
-			const socket = io('http://localhost:3000', { timeout: 3000 });
+			const socket = io(environment.apiUrl, { timeout: 3000 });
 			
 			//Reject if the connection fails
 			socket.on('error', (error) => observer.error(error));

@@ -30,7 +30,7 @@ module.exports = (server, passport) => {
                     room: {
                         name: room.name,
                         roomId: room._id,
-                        password: !!room.password,
+                        hasPassword: !!room.password,
                         adminStatus: req.user.id === room.adminId
                     }
                 });
@@ -70,7 +70,7 @@ module.exports = (server, passport) => {
                 const room = { 
                     name: rooms[i].name,
                     roomId: rooms[i]._id,
-                    password: !!rooms[i].password,
+                    hasPassword: !!rooms[i].password,
                     adminStatus: req.user.id === rooms[i].adminId
                 }
                 roomList.push(room);
@@ -89,7 +89,7 @@ module.exports = (server, passport) => {
                 const response = {
                     name: room.name,
                     roomId: room._id,
-                    password: !!room.password,
+                    hasPassword: !!room.password,
                     adminStatus: req.user.id === room.adminId
                 }
                 res.json(response);
