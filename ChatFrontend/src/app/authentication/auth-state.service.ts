@@ -35,7 +35,6 @@ export class AuthStateService {
         .timeout(this.timeoutDuration)
         .map((jwt) => {
             if (jwt && jwt['token']) { //If we got a token, login was successful
-                console.log('login subscribe fired.');
                 localStorage.setItem(this.tokenStorageKey, jwt['token']);
                 this.authSubject.next(true);
                 return true
@@ -72,6 +71,10 @@ export class AuthStateService {
             return null;
     }
 
+    logout(): void {
+        localStorage.removeItem(this.tokenStorageKey);
+    }
+
     //Verifies with the server that the currently stored token is valid
     private validateToken(): Observable<boolean> {;
         const authHeader = this.getAuthHeader();
@@ -79,7 +82,6 @@ export class AuthStateService {
         if (authHeader === null) {
             return Observable.of(false);
         } else {
-            console.log('checking token with server.');
             const headers = { Authorization: authHeader };
             return this.http.get(`${environment.apiUrl}/api/authentication/validate-token`, { headers: headers })
             .timeout(this.timeoutDuration)

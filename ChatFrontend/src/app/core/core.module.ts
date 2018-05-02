@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { RouterModule } from '@angular/router';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   imports: [
@@ -13,6 +14,6 @@ import { AuthenticationModule } from '../authentication/authentication.module';
   exports: [
     WelcomeComponent
   ],
-  declarations: [WelcomeComponent]
+  declarations: [WelcomeComponent, AboutComponent]
 })
 export class CoreModule { }

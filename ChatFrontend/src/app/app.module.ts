@@ -11,12 +11,24 @@ import { DashboardComponent } from './chat/dashboard/dashboard.component';
 import { CoreModule } from './core/core.module';
 import { WelcomeComponent } from './core/welcome/welcome.component';
 import { ChatRoomComponent } from './chat/chat-room/chat-room.component';
+import { AboutComponent } from './core/about/about.component';
+import { AuthGuardService } from './authentication/auth-guard.service';
 
 const routes: Route[] = [
-	{ path: 'dashboard', component: DashboardComponent },
+	{ path: 'about', component: AboutComponent },
+	{ 
+		path: 'dashboard', 
+		component: DashboardComponent, 
+		canActivate: [AuthGuardService], 
+		data: { redirect: '/' }
+	},
 	{ path: 'chat-room/:roomId/:password', component: ChatRoomComponent },
-	{ path: '', component: WelcomeComponent },
-	{ path: '**', component: WelcomeComponent }
+	{ 
+		path: '**',
+		component: WelcomeComponent,
+		canActivate: [AuthGuardService],
+		data: { redirect: '/dashboard', invert: true }
+	}
 ];
 
 @NgModule({
@@ -30,7 +42,7 @@ const routes: Route[] = [
 		ChatModule,
 		RouterModule.forRoot(routes)
 	],
-	providers: [],
+	providers: [AuthGuardService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

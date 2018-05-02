@@ -17,9 +17,8 @@
     height: 62px;
 }
 
-.container {
-    margin-top: 60px;
-    padding: 0 5%;
+.room-container {
+    padding: 70px 5% 0 5%;
 }
 
 .fade {
