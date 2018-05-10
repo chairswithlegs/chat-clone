@@ -11,8 +11,8 @@
 			<li class="nav-item">
 				<a class="nav-link" [routerLink]="'/about'">About</a>
 			</li>
-			<li *ngIf="!auth.authState | async" class="nav-item">
-				<a class="nav-link" [routerLink]="'/'">Log in</a>
+			<li *ngIf="!(auth.authState | async)" class="nav-item">
+				<a class="nav-link" [routerLink]="'/'">Login</a>
 			</li>
 			<li *ngIf="auth.authState | async" class="nav-item">
 				<a class="nav-link" [routerLink]="'/dashboard'">Dashboard</a>
