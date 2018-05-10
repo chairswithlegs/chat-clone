@@ -11,13 +11,13 @@
 			<li class="nav-item">
 				<a class="nav-link" [routerLink]="'/about'">About</a>
 			</li>
-			<li *ngIf="!(auth.authState | async)" class="nav-item">
+			<li *ngIf="!(auth.authState | async)" class="nav-item logged-out-item">
 				<a class="nav-link" [routerLink]="'/'">Login</a>
 			</li>
-			<li *ngIf="auth.authState | async" class="nav-item">
+			<li *ngIf="auth.authState | async" class="nav-item logged-in-item">
 				<a class="nav-link" [routerLink]="'/dashboard'">Dashboard</a>
 			</li>
-			<li *ngIf="auth.authState | async" class="nav-item">
+			<li *ngIf="auth.authState | async" class="nav-item logged-in-item">
 				<a class="nav-link" [routerLink]="'/'" (click)="logout()">Log out</a>
 			</li>
 		</ul>
