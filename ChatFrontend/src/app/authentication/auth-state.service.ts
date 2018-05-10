@@ -73,6 +73,7 @@ export class AuthStateService {
 	}
 
 	logout(): void {
+		this.authSubject.next(false);
 		localStorage.removeItem(this.tokenStorageKey);
 	}
 

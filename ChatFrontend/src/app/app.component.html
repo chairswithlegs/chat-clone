@@ -18,7 +18,7 @@
 				<a class="nav-link" href="#" [routerLink]="'/dashboard'">Dashboard</a>
 			</li>
 			<li *ngIf="auth.authState | async" class="nav-item">
-				<a class="nav-link" href="/" (click)="logout()">Log out</a>
+				<a class="nav-link" [routerLink]="'/'" (click)="logout()">Log out</a>
 			</li>
 		</ul>
 	</div>
