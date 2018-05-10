@@ -1,11 +1,13 @@
 <div class="room-list-container">
-    <div class="form-group search-bar">
-        <input name="room-search" type="text" aria-label="chat room search" class="form-control" id="room-search" placeholder="Enter Room Name" [(ngModel)]="searchString">
-    </div>
-    
-    <ul class="list-group search-results" *ngIf="searchString">
-        <li class="list-group-item search-result" *ngFor="let chatRoom of chatRooms | searchFilter:searchString:'name':5" (click)="selectRoom(chatRoom)">
-            {{ chatRoom.name }} <span *ngIf="chatRoom.hasPassword" class="badge badge-pill badge-primary">Password</span>
-        </li>
-    </ul>
+	<div class="form-group search-bar">
+		<input name="room-search" type="text" aria-label="chat room search" class="form-control" id="room-search" placeholder="Enter Room Name"
+		 [(ngModel)]="searchString">
+	</div>
+
+	<ul class="list-group search-results" *ngIf="searchString">
+		<li class="list-group-item search-result" *ngFor="let chatRoom of chatRooms | searchFilter:searchString:'name':5" (click)="selectRoom(chatRoom)">
+			{{ chatRoom.name }}
+			<span *ngIf="chatRoom.hasPassword" class="badge badge-pill badge-primary">Password</span>
+		</li>
+	</ul>
 </div>

@@ -3,17 +3,17 @@
 		<p>
 			Welcome to the App!
 		</p>
-		
+
 		<div *ngIf="formView==='login'">
 			<app-login successRedirect="dashboard"></app-login>
-			<p class="form-footer">Don't have an account? <a (click)="showForm('accountCreation')">Click here</a> to create one.</p>
+			<p class="form-footer">Don't have an account?
+				<a (click)="showForm('accountCreation')">Click here</a> to create one.</p>
 		</div>
-		
+
 		<div *ngIf="formView==='accountCreation'">
 			<app-account-creation successRedirect="dashboard"></app-account-creation>
-			<p class="form-footer">Already have an account? <a (click)="showForm('login')">Click here</a> to login.</p>
+			<p class="form-footer">Already have an account?
+				<a (click)="showForm('login')">Click here</a> to login.</p>
 		</div>
 	</div>
 </div>
-
-

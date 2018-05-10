@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class WelcomeComponent {
 	formView = 'login';
-	
+
 	showForm(formName) {
 		this.formView = formName;
 	}

@@ -16,14 +16,14 @@ import { AuthGuardService } from './authentication/auth-guard.service';
 
 const routes: Route[] = [
 	{ path: 'about', component: AboutComponent },
-	{ 
-		path: 'dashboard', 
-		component: DashboardComponent, 
-		canActivate: [AuthGuardService], 
+	{
+		path: 'dashboard',
+		component: DashboardComponent,
+		canActivate: [AuthGuardService],
 		data: { redirect: '/' }
 	},
 	{ path: 'chat-room/:roomId/:password', component: ChatRoomComponent },
-	{ 
+	{
 		path: '**',
 		component: WelcomeComponent,
 		canActivate: [AuthGuardService],

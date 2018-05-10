@@ -13,24 +13,24 @@ import { PasswordCacheService } from '../password-cache.service';
 	styleUrls: ['./chat-room.component.css']
 })
 export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
-	
+
 	messages: Message[] = [];
 	showPasswordPrompt = false;
 	invalidPassword = false;
 	@ViewChild('messageContainer') messageContainer: ElementRef;
-	
+
 	private roomId: string;
 	private socket: Socket;
 	private paramSub: Subscription;
 	private scrollSticky = false;
-	
-	constructor(private chat: ChatApiService, private activatedRoute: ActivatedRoute, private passwordCache: PasswordCacheService) {}
-	
+
+	constructor(private chat: ChatApiService, private activatedRoute: ActivatedRoute, private passwordCache: PasswordCacheService) { }
+
 	ngOnInit() {
 		//Load the route parameters (room id and password protection state)
 		this.paramSub = this.activatedRoute.params.subscribe((params) => {
 			this.roomId = params['roomId'];
-			
+
 			//If a password is required try using the cached password or show the prompt, otherwise simply connect.
 			if (params['password'] === 'true' && this.passwordCache.getPassword()) {
 				this.connect(this.passwordCache.getPassword());
@@ -42,12 +42,14 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 			}
 		});
 	}
-	
+
 	ngOnDestroy() {
 		//Cleanup the subscription to avoid a memory leak
-		if (this.paramSub) this.paramSub.unsubscribe();
+		if (this.paramSub) {
+			this.paramSub.unsubscribe();
+		}
 	}
-	
+
 	//When the view changes, move the scrollbar to the bottom if it is sticky - see addMessage()
 	ngAfterViewChecked() {
 		const el = this.messageContainer.nativeElement;
@@ -58,20 +60,20 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.scrollSticky = false;
 		}
 	}
-	
+
 	sendMessage(messageText: string): void {
 		//Make sure the room id and socket have been created
 		if (this.roomId && this.socket) {
 			//Send the message
 			this.chat.sendMessage(this.roomId, messageText, this.socket)
-			.take(1)
-			.subscribe();
+				.take(1)
+				.subscribe();
 		}
 	}
-	
+
 	addMessage(message: Message): void {
 		this.messages.push(message);
-		
+
 		//If the user is at the bottom of the chat (i.e. looking at latest message), make scrollbar sticky
 		const el = this.messageContainer.nativeElement;
 		//2px buffer to allow for minor misalignment
@@ -81,7 +83,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.scrollSticky = false;
 		}
 	}
-	
+
 	private connect(password = ''): void {
 		//Try and create the socket connection
 		this.chat.createChatRoomSocket(this.roomId, password).subscribe((socket) => {

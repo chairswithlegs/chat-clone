@@ -11,16 +11,16 @@ import { PasswordCacheService } from './password-cache.service';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule
-  ],
-  exports: [
-    DashboardComponent
-  ],
-  providers: [ChatApiService, PasswordCacheService],
-  declarations: [DashboardComponent, ChatRoomComponent, RoomListComponent, SearchFilterPipe, NewRoomFormComponent]
+	imports: [
+		CommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+		RouterModule
+	],
+	exports: [
+		DashboardComponent
+	],
+	providers: [ChatApiService, PasswordCacheService],
+	declarations: [DashboardComponent, ChatRoomComponent, RoomListComponent, SearchFilterPipe, NewRoomFormComponent]
 })
 export class ChatModule { }

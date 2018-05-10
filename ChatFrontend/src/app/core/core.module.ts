@@ -6,14 +6,14 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { AboutComponent } from './about/about.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule,
-    AuthenticationModule
-  ],
-  exports: [
-    WelcomeComponent
-  ],
-  declarations: [WelcomeComponent, AboutComponent]
+	imports: [
+		CommonModule,
+		RouterModule,
+		AuthenticationModule
+	],
+	exports: [
+		WelcomeComponent
+	],
+	declarations: [WelcomeComponent, AboutComponent]
 })
 export class CoreModule { }

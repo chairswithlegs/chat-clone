@@ -7,7 +7,7 @@ import { AuthStateService } from './authentication/auth-state.service';
 	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-	constructor(private auth: AuthStateService) {}
+	constructor(private auth: AuthStateService) { }
 
 	logout() {
 		this.auth.logout();
