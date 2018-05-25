@@ -3,9 +3,15 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
 import { ChatApiService } from '../chat-api.service';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Observable } from 'rxjs/Observable';
+import { ChatRoom } from '../chatRoom';
 
 class MockChatApiService {
-
+	getChatRoomList() {
+		const chatRoom = new ChatRoom();
+		chatRoom.name = 'Test Room';
+		return Observable.of([chatRoom]);
+	}
 }
 
 describe('DashboardComponent', () => {
@@ -30,5 +36,9 @@ describe('DashboardComponent', () => {
 
 	it('should create', () => {
 		expect(component).toBeTruthy();
+	});
+
+	it('should get the chatroom list', () => {
+		expect(component.chatRooms[0].name).toBe('Test Room');
 	});
 });

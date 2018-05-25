@@ -10,7 +10,7 @@ import { ChatRoom } from '../chatRoom';
 })
 export class DashboardComponent implements OnInit {
 
-	chatRooms = [];
+	chatRooms: ChatRoom[] = [];
 
 	constructor(private chat: ChatApiService, private router: Router) { }
 

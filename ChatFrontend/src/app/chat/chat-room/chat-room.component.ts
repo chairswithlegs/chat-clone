@@ -72,6 +72,8 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	addMessage(message: Message): void {
+		if (message === null) return;
+		
 		this.messages.push(message);
 
 		//If the user is at the bottom of the chat (i.e. looking at latest message), make scrollbar sticky

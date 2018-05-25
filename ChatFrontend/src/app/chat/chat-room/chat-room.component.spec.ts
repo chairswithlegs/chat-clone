@@ -4,13 +4,20 @@ import { ActivatedRoute } from '@angular/router';
 import { ChatRoomComponent } from './chat-room.component';
 import { ChatApiService } from '../chat-api.service';
 import { PasswordCacheService } from '../password-cache.service';
+import { Observable } from 'rxjs/Observable';
 
 class MockChatApiService {
+	createChatRoomSocket(roomId: String, password: String) {
+		return Observable.of(null);
+	}
 
+	getMessages(socket) {
+		return Observable.of(null);
+	}
 }
 
 class MockActivatedRoute {
-
+	params = Observable.of({ roomId: '1234' });
 }
 
 class MockPasswordCacheService {

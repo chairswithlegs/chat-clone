@@ -13,7 +13,7 @@ export class AccountCreationComponent {
 
 	constructor(private auth: AuthStateService, private router: Router) { }
 
-	createAccount(username: String, password: String) {
+	createAccount(username: String, password: String): void {
 		this.auth.createAccount(username, password)
 			.take(1)
 			.subscribe((success) => {
