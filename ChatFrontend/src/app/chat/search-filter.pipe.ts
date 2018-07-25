@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SearchFilterPipe implements PipeTransform {
 
-	transform(items: any[], searchString: string, filterProperty?: any, maxResults?: number): any {
+	transform(items: any[], searchString: string, filterProperty?: string, maxResults?: number): any {
 		//If the list is empty or no search string is given, don't bother filtering
 		if (!items || !searchString) {
 			return [];

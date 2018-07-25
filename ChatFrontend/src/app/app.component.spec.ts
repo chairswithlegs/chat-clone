@@ -65,7 +65,7 @@ describe('AppComponent', () => {
         auth.setAuthState(true);
         fixture.detectChanges();
         
-        //Find and verify the presence of the correct elements (will be null if not found)
+        //Find and verify the presence of the correct elements
         loggedInMenuItem = fixture.debugElement.query(By.css('.logged-in-item'));
         loggedOutMenuItem = fixture.debugElement.query(By.css('.logged-out-item'));
         expect(loggedOutMenuItem).toBeNull();
