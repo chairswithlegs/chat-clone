@@ -90,7 +90,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 		//Try and create the socket connection
 		this.chat.createChatRoomSocket(this.roomId, password).subscribe((socket) => {
 			//If the connection goes through, start the messaging stream
-			this.chat.getMessages(socket).subscribe((message) => this.addMessage(message));
+			this.chat.getMessages(socket).subscribe((message: Message) => this.addMessage(message));
 			//Save the socket connection (so we can send messages with it)
 			this.socket = socket;
 			//hide the password prompt

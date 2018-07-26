@@ -5,11 +5,12 @@ import { ChatApiService } from '../chat-api.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs/Observable';
 import { ChatRoom } from '../chatRoom';
+import { Router } from '@angular/router';
 
 class MockChatApiService {
 	getChatRoomList() {
 		const chatRoom = new ChatRoom();
-		chatRoom.name = 'Test Room';
+		chatRoom.name = 'test room';
 		return Observable.of([chatRoom]);
 	}
 }
@@ -17,6 +18,7 @@ class MockChatApiService {
 describe('DashboardComponent', () => {
 	let component: DashboardComponent;
 	let fixture: ComponentFixture<DashboardComponent>;
+	let router: Router;
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
@@ -31,6 +33,7 @@ describe('DashboardComponent', () => {
 	beforeEach(() => {
 		fixture = TestBed.createComponent(DashboardComponent);
 		component = fixture.componentInstance;
+		router = TestBed.get(Router);
 		fixture.detectChanges();
 	});
 
@@ -39,6 +42,12 @@ describe('DashboardComponent', () => {
 	});
 
 	it('should get the chatroom list', () => {
-		expect(component.chatRooms[0].name).toBe('Test Room');
+		expect(component.chatRooms[0].name).toBe('test room');
+	});
+
+	it('should navigate to the chat room route', () => {
+		const spy = spyOn(router, 'navigate');
+		component.joinChatRoom('', false);
+		expect(spy).toHaveBeenCalled();
 	});
 });
