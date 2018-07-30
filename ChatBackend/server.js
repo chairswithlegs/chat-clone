@@ -50,7 +50,7 @@ app.use('/api/authentication', authenticationRouter);
 app.use('/api/chat', chatRouter);
 
 //Add the public files (Angular app), and redirect all uncaught GET requests to the app as well
-app.use(express.static('public'));
+app.use(express.static(`${__dirname}/public`));
 app.get('*', (req, res) => res.sendFile(`${__dirname}/public/index.html`));
 
 //Add the error handling middleware
