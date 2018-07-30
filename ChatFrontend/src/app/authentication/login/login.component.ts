@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
+	username: String;
+	password: String;
 	@Input() successRedirect: any[];
 
 	constructor(private auth: AuthStateService, private router: Router) { }

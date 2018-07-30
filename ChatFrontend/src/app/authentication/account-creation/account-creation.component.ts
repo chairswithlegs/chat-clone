@@ -9,6 +9,8 @@ import { AuthStateService } from '../auth-state.service';
 })
 export class AccountCreationComponent {
 
+	username: String;
+	password: String;
 	@Input() successRedirect: any[];
 
 	constructor(private auth: AuthStateService, private router: Router) { }
