@@ -100,6 +100,7 @@ module.exports = (server, passport) => {
     //Adds the client socket to a chat room
     router.post('/join-room', passport.authenticate('jwt', { session: false }), (req, res, next) => {
         const socket = io.sockets.sockets[req.body.socketId];
+        const userId = req.user._id;
 
         //Make sure the request body is complete
         if (socket === undefined || req.body.roomId === undefined) {
@@ -117,7 +118,8 @@ module.exports = (server, passport) => {
                 room.comparePassword(req.body.password || '', (error, match) => {
                     if (error) {
                         next(error);
-                    } else if (match) {
+                    } else if (match || userId == room.adminId) { //Correct password OR room admin
+                        console.log
                         socket.join(room.id); //Add client socket to room
                         emitStoredMessages(room.id, socket); //Emit stored messages
                         res.json(({ message: `You joined the room.`}));
