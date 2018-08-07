@@ -2,6 +2,7 @@
 
 This project is a Chat Room web app built on Angular, Express, and MongoDB. 
 
+You can visit a live version of the app [here](https://chat-clone.herokuapp.com/about).
 
 ## Getting Started
 
