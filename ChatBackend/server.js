@@ -24,9 +24,8 @@ passport.use(passportStrategies.jwt);
 
 //Load misc. middleware
 const bodyParser = require('body-parser');
-if (process.env.NODE_ENV === 'development') {
-	const cors = require('cors');
-}
+const cors = require('cors');
+
 const errorLogger = require('./middleware/errorLogger');
 const errorHandler = require('./middleware/errorHandler');
 
