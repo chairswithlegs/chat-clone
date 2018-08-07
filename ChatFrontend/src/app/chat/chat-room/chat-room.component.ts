@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewChecked, ViewChild, ElementRef }
 import { ChatApiService } from '../chat-api.service';
 import { ChatRoom } from '../chatRoom';
 import { Message } from '../message';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { Socket } from 'socket.io';
 import { PasswordCacheService } from '../password-cache.service';
@@ -14,6 +14,7 @@ import { PasswordCacheService } from '../password-cache.service';
 })
 export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 
+    chatRoom: ChatRoom;
 	messages: Message[] = [];
 	showPasswordPrompt = false;
 	invalidPassword = false;
@@ -24,22 +25,33 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 	private paramSub: Subscription;
 	private scrollSticky = false;
 
-	constructor(private chat: ChatApiService, private activatedRoute: ActivatedRoute, private passwordCache: PasswordCacheService) { }
+    constructor(
+        private chat: ChatApiService,
+        private activatedRoute: ActivatedRoute,
+        private passwordCache: PasswordCacheService,
+        private router: Router
+    ) { }
 
 	ngOnInit() {
 		//Load the route parameters (room id and password protection state)
 		this.paramSub = this.activatedRoute.params.subscribe((params) => {
 			this.roomId = params['roomId'];
+            
+            //Get chat room information
+            this.chat.getChatRoom(this.roomId).take(1).subscribe((chatRoom: ChatRoom) => {
+                this.chatRoom = chatRoom;
 
-			//If a password is required try using the cached password or show the prompt, otherwise simply connect.
-			if (params['password'] === 'true' && this.passwordCache.getPassword()) {
-				this.connect(this.passwordCache.getPassword());
-				this.passwordCache.clearCache();
-			} else if (params['password'] === 'true') {
-				this.showPasswordPrompt = true;
-			} else {
-				this.connect();
-			}
+                if (chatRoom.adminStatus) { //Password not needed if room admin
+                    this.connect();
+                } else if (params['password'] === 'true' && this.passwordCache.getPassword()) {
+                    this.connect(this.passwordCache.getPassword());
+                    this.passwordCache.clearCache();
+                } else if (params['password'] === 'true') {
+                    this.showPasswordPrompt = true;
+                } else {
+                    this.connect();
+                }
+            });
 		});
 	}
 
@@ -84,7 +96,17 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 		} else {
 			this.scrollSticky = false;
 		}
-	}
+    }
+    
+    closeRoom(): void {
+        this.chat.deleteChatRoom(this.chatRoom.roomId)
+        .take(1)
+        .subscribe((success) => {
+            if (success) {
+                this.router.navigate(['/dashboard']);
+            }
+        });
+    }
 
 	private connect(password = ''): void {
 		//Try and create the socket connection
@@ -94,12 +116,12 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
 			//Save the socket connection (so we can send messages with it)
 			this.socket = socket;
 			//hide the password prompt
-			this.showPasswordPrompt = false;
+            this.showPasswordPrompt = false;
 		}, (error) => {
 			//If the cache password fails for some reason, we need to show the prompt
 			this.showPasswordPrompt = true;
 			//Alert the user to try a different password
 			this.invalidPassword = true;
 		});
-	}
+    }
 }

@@ -50,7 +50,20 @@ export class ChatApiService {
 
 		return this.http.post(`${environment.apiUrl}/api/chat/create-room`, body, { headers: headers })
 			.map((response: { message: string, room: ChatRoom }) => response.room); //Strongly type the response
-	}
+    }
+    
+    //Deletes the chat room (user must be chat admin)
+    deleteChatRoom(roomId: string): Observable<Boolean> {
+        //Get the authorization header so we can authenticate the request
+		const headers = { Authorization: this.auth.getAuthHeader() };
+
+		//Create the body of the request and send it
+		const body = { id: roomId };
+
+		return this.http.post(`${environment.apiUrl}/api/chat/delete-room`, body, { headers: headers })
+            .map(() => true)
+            .catch(() => Observable.of(false)); 
+    }
 
 	//Returns an observable of messages using a socket connection
 	getMessages(socket: Socket): Observable<Message> {

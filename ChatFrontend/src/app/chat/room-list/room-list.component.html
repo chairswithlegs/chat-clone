@@ -7,7 +7,8 @@
 	<ul class="list-group search-results" *ngIf="searchString">
 		<li class="list-group-item search-result" *ngFor="let chatRoom of chatRooms | searchFilter:searchString:'name':5" (click)="selectRoom(chatRoom)">
 			{{ chatRoom.name }}
-			<span *ngIf="chatRoom.hasPassword" class="badge badge-pill badge-primary">Password</span>
+            <span *ngIf="chatRoom.hasPassword" class="badge badge-pill badge-primary">Password</span>
+            <span *ngIf="chatRoom.adminStatus" class="badge badge-pill badge-danger">Admin</span>
 		</li>
 	</ul>
 </div>

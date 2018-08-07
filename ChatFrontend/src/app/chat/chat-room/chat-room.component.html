@@ -1,5 +1,8 @@
 <div [class.fade]="showPasswordPrompt" class="room-container">
 	<a [routerLink]="'/dashboard'">&lt; back to dashboard</a>
+    <a (click)="closeRoom()" *ngIf="chatRoom?.adminStatus" class="text-danger float-right" id="close-room-link">
+        Close this room
+    </a>
 
 	<div class="card">
 		<ul #messageContainer class="messages-container list-group list-group-flush">
