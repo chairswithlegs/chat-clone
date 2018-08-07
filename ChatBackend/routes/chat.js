@@ -119,7 +119,6 @@ module.exports = (server, passport) => {
                     if (error) {
                         next(error);
                     } else if (match || userId == room.adminId) { //Correct password OR room admin
-                        console.log
                         socket.join(room.id); //Add client socket to room
                         emitStoredMessages(room.id, socket); //Emit stored messages
                         res.json(({ message: `You joined the room.`}));
