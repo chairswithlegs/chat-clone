@@ -11,5 +11,7 @@
 		<input name="create-password" type="password" class="form-control" id="create-password" placeholder="Password" [(ngModel)]="password">
 	</div>
 
-	<button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+    <span *ngIf="errorAlert" class="text-danger pl-2">Username already taken.</span>
 </form>

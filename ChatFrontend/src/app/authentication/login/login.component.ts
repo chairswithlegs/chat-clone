@@ -12,7 +12,8 @@ export class LoginComponent {
 
 	username: String;
 	password: String;
-	@Input() successRedirect: any[];
+    @Input() successRedirect: any[];
+    errorAlert = false;
 
 	constructor(private auth: AuthStateService, private router: Router) { }
 
@@ -21,7 +22,7 @@ export class LoginComponent {
 		.take(1)
 		.subscribe((success) => {
 			if (!success) {
-				console.log('Log in failed');
+				this.errorAlert = true;
 			} else if (this.successRedirect) {
 				this.router.navigate([this.successRedirect]);
 			}

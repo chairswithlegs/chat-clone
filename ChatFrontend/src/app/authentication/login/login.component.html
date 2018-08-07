@@ -9,7 +9,9 @@
 	<div class="form-group">
 		<label for="login-password">Password</label>
 		<input name="login-password" type="password" class="form-control" id="login-password" placeholder="Password" [(ngModel)]="password">
-	</div>
+    </div>
 
-	<button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    
+    <span *ngIf="errorAlert" class="text-danger pl-2">Invalid password or username.</span>
 </form>

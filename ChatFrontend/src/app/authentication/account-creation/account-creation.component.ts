@@ -12,6 +12,7 @@ export class AccountCreationComponent {
 	username: String;
 	password: String;
 	@Input() successRedirect: any[];
+    errorAlert = false;
 
 	constructor(private auth: AuthStateService, private router: Router) { }
 
@@ -20,10 +21,14 @@ export class AccountCreationComponent {
 			.take(1)
 			.subscribe((success) => {
 				if (!success) {
-					console.log('Log in failed');
+					this.errorAlert = true;
 				} else if (this.successRedirect) {
-					this.router.navigate([this.successRedirect]);
+                    this.auth.login(username, password)
+                    .take(1)
+                    .subscribe((success) => {
+                        this.router.navigate([this.successRedirect]);
+                    });
 				}
 			});
-	}
+    }
 }
